@@ -3,10 +3,10 @@ import './student.css'
 
 const Student = (props, ref) => {
     const [expandView, setExpandView] = useState(false)
+    const [containerHeight, setContainerHeight] = useState(0)
     const [tags, setTags] = useState([])
+    const [input, setInput] = useState('')
     const testScoresRef = useRef()
-    const containerRef = useRef()
-    const inputRef = useRef()
     const {firstName, lastName, email, pic, grades, company, skill, updateTags} = props
     const fullName = firstName.concat(' ', lastName)
 
@@ -16,37 +16,37 @@ const Student = (props, ref) => {
         return  avg
     }
 
-    // returning a memoized average value as the grades never change
     const average = useMemo(()=>{
       return getAverage(grades)
     },[grades])
 
     const handleToggle = (e) => {
-      // toggle expandable view
       setExpandView((prevState) => {
         return !prevState
       })
     }
 
     useEffect(()=> {
-      // retrieve dropdown menu height from the DOM
       const testScoresHeight = testScoresRef.current.getBoundingClientRect().height
       if (expandView) {
-        containerRef.current.style.height = `${testScoresHeight}px`
+        setContainerHeight(testScoresHeight)
       } else {
-        containerRef.current.style.height = "0px"
+        setContainerHeight(0)
       }
     },[expandView])
 
-    const handleKeyPress = (e) => {
-      const value = inputRef.current.value.toLowerCase()
-      // enter is create tag
+    const handleKeyPress = (e) => {    
       if (e.key === 'Enter') {
-        setTags([...tags,value])
-        updateTags(firstName.concat(lastName),value)
-        inputRef.current.value = ''
+        setTags([...tags,input])
+        updateTags(firstName.concat(lastName),input)
+        setInput('')
       }
     }
+
+  const handleOnChange = (e) => {
+    const value = e.target.value.toLowerCase()
+    setInput(value)
+  }
 
   return (
     <article className="student-root">
@@ -71,8 +71,8 @@ const Student = (props, ref) => {
                         )
                     })}
               </div>
-              <input ref={inputRef}  placeholder="Add a tag" onKeyPress={handleKeyPress} type="text" />
-              <section ref={containerRef} className="test-scores-section">
+              <input value={input} onChange={handleOnChange} placeholder="Add a tag" onKeyPress={handleKeyPress} type="text" />
+              <section style={{height:`${containerHeight}px`}} className="test-scores-section">
                 <div ref={testScoresRef} className="test-results">
                   {grades.map((grade, index) => {
                     return (

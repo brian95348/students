@@ -46,9 +46,6 @@ function StudentsList() {
                 if (searchTerms.tag === '' || Object.keys(tags).length === 0) {
                     return fullName.toLowerCase()
                                     .includes(searchTerms.name.toLowerCase())
-                } else if (searchTerms.tag !== '' && Object.keys(tags).length === 0){
-                    return fullName.toLowerCase()
-                        .includes(searchTerms.name.toLowerCase())
                 } else {
                     return fullName.toLowerCase()
                                     .includes(searchTerms.name.toLowerCase()) && (
@@ -58,7 +55,6 @@ function StudentsList() {
             })
             return searchResults
     }
-
 
     const handleChange= (e) => {
         const name = e.target.name;
